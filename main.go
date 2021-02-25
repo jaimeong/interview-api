@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-
 	"math/rand"
 
 	"log"
@@ -14,34 +13,12 @@ import (
 	"fmt"
 
 	"strconv"
+
+	"github.com/jimmyjongs/inter/models"
 )
 
-// User model
-type User struct {
-	ID         string      `json:"id"`
-	Firstname  string      `json:"firstname"`
-	Lastname   string      `json:"lastname"`
-	Interviews []Interview `json:"interviews"`
-}
-
-//asdfasff
-// Interview model
-type Interview struct {
-	Date  string  `json:"date`
-	Party []User  `json:"party"`
-	Score float32 `json:"score"`
-}
-
-// Question model
-type Question struct {
-	Category string  `json:"category"`
-	Question string  `json:"question"`
-	Answer   string  `json:"answer"`
-	Score    float32 `json:score`
-}
-
 // init users as User slice (list)
-var users []User
+var users []models.User
 
 func getUsers(w http.ResponseWriter, r *http.Request) {
 	// set header
@@ -66,13 +43,13 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	json.NewEncoder(w).Encode(&User{})
+	json.NewEncoder(w).Encode(&models.User{})
 
 }
 
 func createUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var user User
+	var user models.User
 	_ = json.NewDecoder(r.Body).Decode(&user)
 
 	user.ID = strconv.Itoa(rand.Intn(1000000))
@@ -95,7 +72,7 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 			users = append(users[:index], users[index+1:]...)
 
 			// create's creation
-			var user User
+			var user models.User
 			_ = json.NewDecoder(r.Body).Decode(&user)
 
 			user.ID = params["id"]
@@ -123,10 +100,10 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 }
 
 // generate dummy interview data
-func genInterviews(n int) []Interview {
+func genInterviews(n int) []models.Interview {
 	// generate interviews
-	tmp := make([]Interview, n)
-	usersList := make([]User, 1)
+	tmp := make([]models.Interview, n)
+	usersList := make([]models.User, 1)
 	usersList = append(usersList, users...)
 
 	for i := range tmp {
@@ -145,21 +122,21 @@ func main() {
 
 	// dummy data @ todo - implement DB
 
-	users = append(users, User{
+	users = append(users, models.User{
 		ID:         "1",
 		Firstname:  "John",
 		Lastname:   "Smith",
 		Interviews: genInterviews(2),
 	})
 
-	users = append(users, User{
+	users = append(users, models.User{
 		ID:         "2",
 		Firstname:  "Jane",
 		Lastname:   "Doe",
 		Interviews: genInterviews(1),
 	})
 
-	users = append(users, User{
+	users = append(users, models.User{
 		ID:         "3",
 		Firstname:  "Sam",
 		Lastname:   "Thi",
