@@ -24,6 +24,7 @@ type User struct {
 	Interviews []Interview `json:"interviews"`
 }
 
+//asdfasff
 // Interview model
 type Interview struct {
 	Date  string  `json:"date`
