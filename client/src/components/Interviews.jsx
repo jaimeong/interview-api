@@ -36,7 +36,10 @@ const Interviews = function () {
             <div className='question-box' ref={questionContainer}>
                 {[...Array(counter)].map((item, index) => <Question key={index} setData={handlePassedData} setQuestionData={setQuestionData} index={index} questionData={questionData} />)}
             </div>
+            <div className='btns'>
             <button className='add-btn' onClick={addQuestion}>Add question</button>
+            <button className='completed-btn'>Complete Interview</button>
+            </div>
         </div>
     )
 }

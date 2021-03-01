@@ -12,9 +12,14 @@ $lato: 'Lato', sans-serif;
     box-shadow: 4px 4px 8px rgba(0,0,0,0.25);
     padding: 5% 0;
     border-radius: 10px;
+    font-family: $lato;
+
+    select, textarea {
+        font-family: $lato;
+    }
 }
 
-.saved-btn, .update-btn, .add-btn {
+.saved-btn, .update-btn, .add-btn, .completed-btn {
     background: none;
     border: none;
     padding: 2% 5%;
@@ -39,5 +44,17 @@ $lato: 'Lato', sans-serif;
 .add-btn {
     background: blue;
     padding: 1% 3%;
-    margin: 5% 0;
+    margin: 3% 0;
 };
+.completed-btn {
+    background: orange;
+    padding: 1% 3%;
+    margin: 3% 0;
+}
+
+.btns {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
