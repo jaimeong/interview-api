@@ -15,8 +15,9 @@ const Question = function({setData, questionData, index, setQuestionData}) {
         let current = parseInt(questionContainer.current.id, 10);
         if(current >= questionData.length) {
             let type = questionType.current.value;
-            let data = {id: questionData.length, type: type, question: question, response: response, notes: notes};
+            let data = {id: questionData.length, type: type, question: question, response: response, notes: notes, date: new Date()};
             setData(data);
+            console.log(questionBox);
             questionBox.current.readOnly = true;
             questionBox.current.style.border = '2px solid green';
             responseBox.current.readOnly = true;
@@ -33,6 +34,7 @@ const Question = function({setData, questionData, index, setQuestionData}) {
             let data = {id: index, type: type, question: question, response: response, notes: notes};
             for(let i = 0; i < questionData.length; i++) {
                 if(questionData[i].id === current) {
+                    data.date = questionData[i].date;
                     questionData[i] = data;
                 }
             }
