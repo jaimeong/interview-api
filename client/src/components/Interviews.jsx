@@ -34,9 +34,9 @@ const Interviews = function () {
                 </div>
             </form>
             <div className='question-box' ref={questionContainer}>
-                {[...Array(counter)].map((item, index) => <Question setData={handlePassedData} setQuestionData={setQuestionData} index={index} questionData={questionData} />)}
+                {[...Array(counter)].map((item, index) => <Question key={index} setData={handlePassedData} setQuestionData={setQuestionData} index={index} questionData={questionData} />)}
             </div>
-            <button onClick={addQuestion}>Add question</button>
+            <button className='add-btn' onClick={addQuestion}>Add question</button>
         </div>
     )
 }
