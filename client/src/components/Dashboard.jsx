@@ -11,7 +11,8 @@ let initialState = [
 const Dashboard = () => {
     return (
         <div className='dashboard-container'>
-            <h1>Horse Field Interviews</h1>
+            <h1 className='interview-header'>Horse Field Interviews</h1>
+            <a className='create-interview-btn' href='/api/interviews'>Create Interview</a>
             <div class='dash-interview-container'>
             {initialState.map((interview, id) => {
                 console.log(interview.date);
