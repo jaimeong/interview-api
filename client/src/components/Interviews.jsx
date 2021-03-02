@@ -32,9 +32,10 @@ const Interviews = function () {
         // pack the data to be sent over to backend api
         let data = [{interviewer, interviewee}, {questionData}]
         console.log(data);
-        axios.post('http://localhost:8000/api/interviews', data)
+        axios.post('http://localhost:8000/api/interview', data)
         // complete async post request then redirect user to detailed interview page
         .then((res) => console.log(res));
+      
     }
 
     return (

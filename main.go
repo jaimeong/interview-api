@@ -15,6 +15,8 @@ import (
 	"strconv"
 
 	"github.com/jimmyjongs/inter/models"
+
+	"github.com/rs/cors"
 )
 
 // init users as User slice (list)
@@ -215,6 +217,7 @@ func genInterviews(n int) []models.Interview {
 		tmp[i].ID = strconv.Itoa(rand.Intn(100000))
 		tmp[i].Party = usersList
 		tmp[i].Score = rand.Float32() * 5
+		// tmp[i].Interviewer = strconv.Itoa(rand.Intn(100000))
 	}
 	return tmp
 }
@@ -261,6 +264,7 @@ func main() {
 	router.HandleFunc("/api/interview/{id}", updateInterview).Methods("PUT")
 	router.HandleFunc("/api/interview/{id}", deleteInterview).Methods("DELETE")
 
-	log.Fatal(http.ListenAndServe(":8000", router))
+	handler := cors.Default().Handler(router)
+	log.Fatal(http.ListenAndServe(":8000", handler))
 	fmt.Println("Server listening on :8000")
 }
