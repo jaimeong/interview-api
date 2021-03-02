@@ -7,13 +7,19 @@ const Question = function({setData, questionData, index, setQuestionData}) {
     const responseBox = useRef(null);
     const notesBox = useRef(null);
     const questionContainer = useRef(null);
+    const error = useRef(null);
     const [question, setQuestion] = useState('');
     const [response, setResponse] = useState('');
     const [notes, setNotes] = useState('');
     const [saved, setSaved] = useState(false);
     function handleSave() {
         let current = parseInt(questionContainer.current.id, 10);
-        if(current >= questionData.length) {
+        if(!question.length || !response.length || !notes.length) {
+            error.current.textContent = 'Entry is empty, please enter some text';
+            questionBox.current.style.border = '2px solid red';
+            responseBox.current.style.border = '2px solid red';
+            notesBox.current.style.border = '2px solid red';
+        } else if(current >= questionData.length) {
             let type = questionType.current.value;
             let data = {id: questionData.length, type: type, question: question, response: response, notes: notes, date: new Date()};
             setData(data);
@@ -25,6 +31,7 @@ const Question = function({setData, questionData, index, setQuestionData}) {
             notesBox.current.readOnly = true;
             notesBox.current.style.border = '2px solid green';
             questionType.current.disabled = true;
+            error.current.textContent = '';
             setSaved(true);
         } else {
             setQuestion(questionBox.current.value);
@@ -46,6 +53,7 @@ const Question = function({setData, questionData, index, setQuestionData}) {
             notesBox.current.readOnly = true;
             notesBox.current.style.border = '2px solid green';
             questionType.current.disabled = true;
+            error.current.textContent = '';
 
             setSaved(true);
         }
@@ -55,11 +63,11 @@ const Question = function({setData, questionData, index, setQuestionData}) {
         let type = questionType.current.value;
         setSaved(false);
         questionBox.current.readOnly = false;
-        questionBox.current.style.border = '2px solid gold';
+        questionBox.current.style.border = '2px solid orange';
         responseBox.current.readOnly = false;
-        responseBox.current.style.border = '2px solid gold';
+        responseBox.current.style.border = '2px solid orange';
         notesBox.current.readOnly = false;
-        notesBox.current.style.border = '2px solid gold';
+        notesBox.current.style.border = '2px solid orange';
         questionType.current.disabled = false;
     }
 
@@ -77,6 +85,7 @@ const Question = function({setData, questionData, index, setQuestionData}) {
             <textarea type='text' placeholder='Enter their response' name='response' rows="4" cols="50" ref={responseBox} value={response} onChange={(e) => handleChange(e, setResponse)}></textarea>
             <textarea type='text' placeholder='Enter your notes for this question' name='notes' rows="4" cols="50" ref={notesBox} value={notes} onChange={(e) => handleChange(e, setNotes)}></textarea>
             {!saved ? <button className='saved-btn' onClick={handleSave}>Save</button> : <button className='update-btn' onClick={handleUpdate}>Update</button>}
+            <p className='errorMsg' ref={error}></p>
         </div>
     )
 }

@@ -1,6 +1,7 @@
 .dash-interview-container {
     display: flex;
     justify-content: space-around;
+    margin: 5% 0;
 
     .interview-card {
         box-shadow: 4px 4px 8px rgba(0,0,0,0.25);
@@ -16,4 +17,8 @@
             transform: translateY(-10%);
         }
     }
+}
+
+.interview-header {
+    margin: 5% 0;
 }
