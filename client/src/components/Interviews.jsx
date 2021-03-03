@@ -35,7 +35,6 @@ const Interviews = function () {
         axios.post('http://localhost:8000/api/interview', data)
         // complete async post request then redirect user to detailed interview page
         .then((res) => console.log(res));
-      
     }
 
     return (
