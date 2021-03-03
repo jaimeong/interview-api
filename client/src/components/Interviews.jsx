@@ -2,12 +2,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import Question from './Question';
 import '../sass/index.scss';
 import axios from 'axios';
+import shortid from 'shortid';
 
 const Interviews = function () {
     const [questionData, setQuestionData] = useState([]);
     const [counter, setCounter] = useState(0);
     const [interviewer, setInterviewer] = useState('');
     const [interviewee, setInterviewee] = useState('');
+    const [id] = useState(shortid.generate());
     let questionContainer = useRef(null);
 
     function addQuestion() {
@@ -30,7 +32,7 @@ const Interviews = function () {
     // tied to complete interview btn
     function handleSubmit() {
         // pack the data to be sent over to backend api
-        let data = [{interviewer, interviewee}, {questionData}]
+        let data = {id: id, interviewee: interviewee, date: new Date(), interviewer: interviewer, questionData: questionData}
         console.log(data);
         axios.post('http://localhost:8000/api/interview', data)
         // complete async post request then redirect user to detailed interview page
