@@ -19,6 +19,8 @@ var users []string
 
 var interviews []models.Interview
 
+var schedules models.Schedule
+
 // func getUsers(w http.ResponseWriter, r *http.Request) {
 // 	// set header
 // 	w.Header().Set("Content-Type", "application/json")
@@ -33,7 +35,7 @@ var interviews []models.Interview
 // 	// get params
 // 	params := mux.Vars(r)
 
-// 	// loop thhru users, find with id
+// 	// loop thhru users, find with idinterviews
 // 	// for _ + for item in users
 // 	for _, item := range users {
 // 		if item.ID == params["id"] {
@@ -199,23 +201,23 @@ func deleteInterview(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(interviews)
 }
 
-// generate dummy interview data
-// func genInterviews(n int) []models.Interview {
-// 	// generate interviews
-// 	tmp := make([]models.Interview, n)
-// 	usersList := make([]string, 0)
-// 	usersList = append(usersList, users[rand.Intn(len(users))])
-// 	usersList = append(usersList, users[rand.Intn(len(users))])
+func createSchedule(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var schedule models.Schedule
+	_ = json.NewDecoder(r.Body).Decode(&schedule)
 
-// 	for i := range tmp {
-// 		tmp[i].Date = strconv.Itoa(rand.Intn(100000))
-// 		tmp[i].ID = strconv.Itoa(rand.Intn(100000))
-// 		tmp[i].Party = usersList
-// 		tmp[i].Score = rand.Float32() * 5
+	schedules = append(schedules, schedule...)
+	json.NewEncoder(w).Encode(schedule)
 
-// 	}
-// 	return tmp
-// }
+}
+
+func getSchedule(w http.ResponseWriter, r *http.Request) {
+	// set header
+	w.Header().Set("Content-Type", "application/json")
+
+	//encode users into json
+	json.NewEncoder(w).Encode(schedules)
+}
 
 func main() {
 	// init mux router
@@ -246,6 +248,8 @@ func main() {
 	// router.HandleFunc("/api/interview/{id}", updateInterview).Methods("PUT")
 	// router.HandleFunc("/api/interview/{id}", deleteInterview).Methods("DELETE")
 
+	router.HandleFunc("/api/schedule", getSchedule).Methods("GET")
+	router.HandleFunc("/api/schedule", createSchedule).Methods("POST")
 	handler := cors.Default().Handler(router)
 	log.Fatal(http.ListenAndServe(":8000", handler))
 }
