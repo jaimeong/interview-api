@@ -2,44 +2,65 @@ import React, { useState } from 'react';
 import '../sass/index.scss';
 
 const DetailedInterview = () => {
-    const initialState = [
-        {interviewer: 'Henry', interviewee: 'Jimmy'},
-        {questionData: [
+    const initialState = {
+        id: "utgt-JfIs3",
+        interviewee: "Henry",
+        date: "2021-03-03T01:36:13.895Z",
+        interviewer: "Johnny",
+        questionData: [
             {
-                date: new Date(),
-                id: 0, 
-                type: 'conversational', 
-                question: 'What is a binary search tree?', 
-                response: 'A binary search tree is a tree data structure that starts with a root and can have at most two children. Children to the left of the parent are less than the parent and children to the right of the parent are greater than the parent',
-                notes: 'Good understanding of BST',
-                score: '5'
+                id: 0,
+                type: "conversational",
+                question: "'What is a binary search tree?'",
+                response: "A binary search tree is a tree data structure that starts with a root and can have at most two children. Children to the left of the parent are less than the parent and children to the right of the parent are greater than the parent",
+                notes: "Good understanding of binary search tree",
+                date: "2021-03-03T01:36:08.767Z",
+                score: "3"
             },
             {
-                date: new Date(),
-                id: 1, 
-                type: 'conceptual', 
+                id: 1,
+                type: "conversational",
                 question: 'What is a linked list?', 
                 response: 'A linked list is a data structure of nodes attached together with a next pointer, good for inserting and removal at the beginning and end of the list O(1) time',
                 notes: 'Good understanding of linked list',
-                score: '4'
-            },
-        ]}
-    ]
+                date: "2021-03-03T01:36:12.353Z",
+                score: "1"
+            }
+        ]
+}
     const [data, setData] = useState(initialState);
-
+    console.log(data);
     return (
         <div>
-            <h1>Interviewee: {data[0].interviewee}</h1>
-            <h1>Interviewer: {data[0].interviewer}</h1>
-            <p>{data[1].questionData[0].date.toString().slice(0, 15)}</p>
-            {data[1].questionData.map((item, index) => {
+            <div class='interview-nav'>
+                <a className='home-btn' href='/'>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <polyline points="5 12 3 12 12 3 21 12 19 12" />
+                    <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+                    <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+                    </svg>
+                </a>
+                <a href='create-btn' href='/api/interviews/'>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-plus" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <circle cx="12" cy="12" r="9" />
+                    <line x1="9" y1="12" x2="15" y2="12" />
+                    <line x1="12" y1="9" x2="12" y2="15" />
+                    </svg>
+                </a>
+            </div>
+            <h1>Interviewee: {data.interviewee}</h1>
+            <h1>Interviewer: {data.interviewer}</h1>
+            <p>{data.date.toString().slice(0, 10)}</p>
+            {data.questionData.map((item, index) => {
                 return (
                     <div className='detailed-question' key={index}>
                         <h4>{index + 1}. {item.question}</h4>
-                        <p style={{textTransform: 'capitalize', color: 'orange'}}>{item.type}</p>
+                        <p className='interview-type'>{item.type}</p>
                         <p>Response: {item.response}</p>
                         <p>Notes: {item.notes}</p>
-                        <p>Score: {item.score} / 5</p>
+                        <p className='interview-score'>Score: {item.score} / 5</p>
                         <div className='border-bottom'></div>
                     </div>
                 )
