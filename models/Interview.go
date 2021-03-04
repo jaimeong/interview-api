@@ -1,10 +1,8 @@
 package models
 
-type Interview struct {
-	Interviewer string  `json:"interviewer"`
-	Interviewee string  `json:"interviewee"`
-	ID          string  `json:"id"`
-	Date        string  `json:"date`
-	Party       []User  `json:"party"`
-	Score       float32 `json:"score"`
+type Interview []struct {
+	// ID           string         `json:"id,omitempty"`
+	Interviewer  string         `json:"interviewer,omitempty"`
+	Interviewee  string         `json:"interviewee,omitempty"`
+	QuestionData []QuestionData `json:"questionData,omitempty"`
 }
