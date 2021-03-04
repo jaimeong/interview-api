@@ -9,8 +9,6 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"fmt"
-
 	"github.com/jimmyjongs/interview-api/models"
 
 	"github.com/rs/cors"
@@ -109,23 +107,23 @@ func getInterviews(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(interviews)
 }
 
-// func getInterview(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Content-Type", "application/json")
+func getInterview(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 
-// 	// get params
-// 	params := mux.Vars(r)
+	// get params
+	params := mux.Vars(r)
 
-// 	// loop thhru users, find with id
-// 	// for _ + for item in users
-// 	for _, item := range interviews {
-// 		if item.ID == params["id"] {
-// 			json.NewEncoder(w).Encode(item)
-// 			return
-// 		}
-// 	}
+	// loop thhru users, find with id
+	// for _ + for item in users
+	for _, item := range interviews {
+		if item.ID == params["id"] {
+			json.NewEncoder(w).Encode(item)
+			return
+		}
+	}
 
-// 	json.NewEncoder(w).Encode(&models.User{})
-// }
+	json.NewEncoder(w).Encode(&models.Interview{})
+}
 
 // get interviews by user ID
 // currently useless with user Strings
@@ -157,51 +155,49 @@ func createInterview(w http.ResponseWriter, r *http.Request) {
 	var interview models.Interview
 	_ = json.NewDecoder(r.Body).Decode(&interview)
 
-	// interview.ID = strconv.Itoa(rand.Intn(1000000))
-
 	interviews = append(interviews, interview)
 	json.NewEncoder(w).Encode(interview)
 
 }
 
-// func updateInterview(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Content-Type", "application/json")
+func updateInterview(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 
-// 	// get params
-// 	params := mux.Vars(r)
+	// get params
+	params := mux.Vars(r)
 
-// 	for index, item := range interviews {
-// 		if item.ID == params["id"] {
-// 			// delete's slice
-// 			interviews = append(interviews[:index], interviews[index+1:]...)
+	for index, item := range interviews {
+		if item.ID == params["id"] {
+			// delete's slice
+			interviews = append(interviews[:index], interviews[index+1:]...)
 
-// 			// create's creation
-// 			var interview models.Interview
-// 			_ = json.NewDecoder(r.Body).Decode(&interview)
+			// create's creation
+			var interview models.Interview
+			_ = json.NewDecoder(r.Body).Decode(&interview)
 
-// 			interview.ID = params["id"]
-// 			interviews = append(interviews, interview)
-// 			json.NewEncoder(w).Encode(interview)
-// 			return
-// 		}
-// 	}
-// 	json.NewEncoder(w).Encode(interviews)
-// }
+			interview.ID = params["id"]
+			interviews = append(interviews, interview)
+			json.NewEncoder(w).Encode(interview)
+			return
+		}
+	}
+	json.NewEncoder(w).Encode(interviews)
+}
 
-// func deleteInterview(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Content-Type", "application/json")
+func deleteInterview(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 
-// 	// get params
-// 	params := mux.Vars(r)
+	// get params
+	params := mux.Vars(r)
 
-// 	for index, item := range interviews {
-// 		if item.ID == params["id"] {
-// 			interviews = append(interviews[:index], interviews[index+1:]...)
-// 			break
-// 		}
-// 	}
-// 	json.NewEncoder(w).Encode(interviews)
-// }
+	for index, item := range interviews {
+		if item.ID == params["id"] {
+			interviews = append(interviews[:index], interviews[index+1:]...)
+			break
+		}
+	}
+	json.NewEncoder(w).Encode(interviews)
+}
 
 // generate dummy interview data
 // func genInterviews(n int) []models.Interview {
@@ -244,7 +240,7 @@ func main() {
 	// router.HandleFunc("/api/user/{id}", deleteUser).Methods("DELETE")
 
 	router.HandleFunc("/api/interviews", getInterviews).Methods("GET")
-	// router.HandleFunc("/api/interview/{id}", getInterview).Methods("GET")
+	router.HandleFunc("/api/interview/{id}", getInterview).Methods("GET")
 	// router.HandleFunc("/api/interview/user/{id}", getUserInterview).Methods("GET")
 	router.HandleFunc("/api/interview", createInterview).Methods("POST")
 	// router.HandleFunc("/api/interview/{id}", updateInterview).Methods("PUT")
@@ -252,5 +248,4 @@ func main() {
 
 	handler := cors.Default().Handler(router)
 	log.Fatal(http.ListenAndServe(":8000", handler))
-	fmt.Println("Server listening on :8000")
 }
