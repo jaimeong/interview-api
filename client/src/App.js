@@ -9,6 +9,7 @@ import {
 import Interviews from './components/Interviews'
 import Dashboard from './components/Dashboard'
 import DetailedInterview from './components/DetailedInterview'
+import Schedule from './components/Schedule'
 
 function App() {
   return (
@@ -18,6 +19,9 @@ function App() {
           <Route path='/api/interviews/:id' component={DetailedInterview} />
           <Route path='/api/interviews/'>
             <Interviews />
+          </Route>
+          <Route path='/api/schedule'>
+            <Schedule />
           </Route>
           <Route path='/'>
             <Dashboard />
