@@ -15,3 +15,27 @@ $lato: 'Lato', sans-serif;
     height: 2px;
     width: 100%;
 }
+
+.interview-score {
+    color: green;
+    font-weight: bold;
+}
+
+.interview-type {
+    text-transform: capitalize;
+    color: orange;
+    font-weight: bold;
+}
+
+.interview-nav {
+    display: flex;
+
+    a {
+        margin: 2% 3% 2% 5%;
+        transition: all 300ms linear;
+
+        &:hover {
+            transform: translateY(-10%);
+        }
+    }
+}
