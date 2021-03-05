@@ -1,7 +1,11 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
+	"os"
+	"time"
 
 	"log"
 
@@ -12,12 +16,16 @@ import (
 	"github.com/jimmyjongs/interview-api/models"
 
 	"github.com/rs/cors"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // init users as User slice (list)
 var users []string
 
-var interviews []models.Interview
+// var interviews []models.Interview
 
 var schedules models.Schedule
 
@@ -105,27 +113,56 @@ func getInterviews(w http.ResponseWriter, r *http.Request) {
 	// set header
 	w.Header().Set("Content-Type", "application/json")
 
-	//encode users into json
-	json.NewEncoder(w).Encode(interviews)
-}
+	collection := client.Database("interview-app").Collection("interviews")
+	cursor, err := collection.Find(context.TODO(), bson.D{})
 
-func getInterview(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	// Find() method raised an error
+	if err != nil {
+		fmt.Println("Finding all documents ERROR:", err)
+		defer cursor.Close(ctx)
+	} else {
 
-	// get params
-	params := mux.Vars(r)
+		var interviews []models.Interview
+		// iterate over docs using Next()
+		for cursor.Next(ctx) {
+			// Declare a result BSON object
+			var result models.Interview
+			err := cursor.Decode(&result)
 
-	// loop thhru users, find with id
-	// for _ + for item in users
-	for _, item := range interviews {
-		if item.ID == params["id"] {
-			json.NewEncoder(w).Encode(item)
-			return
+			// If there is a cursor.Decode error
+			if err != nil {
+				fmt.Println("cursor.Next() error:", err)
+				os.Exit(1)
+
+				// If there are no cursor.Decode errors
+			} else {
+				interviews = append(interviews, result)
+				// fmt.Println("\nresult type:", reflect.TypeOf(result))
+				// fmt.Println("result:", result)
+			}
 		}
+		// //encode users into json
+		json.NewEncoder(w).Encode(interviews)
 	}
-
-	json.NewEncoder(w).Encode(&models.Interview{})
 }
+
+// func getInterview(w http.ResponseWriter, r *http.Request) {
+// 	w.Header().Set("Content-Type", "application/json")
+
+// 	// get params
+// 	params := mux.Vars(r)
+
+// 	// loop thhru users, find with id
+// 	// for _ + for item in users
+// 	for _, item := range interviews {
+// 		if item.ID == params["id"] {
+// 			json.NewEncoder(w).Encode(item)
+// 			return
+// 		}
+// 	}
+
+// 	json.NewEncoder(w).Encode(&models.Interview{})
+// }
 
 // get interviews by user ID
 // currently useless with user Strings
@@ -155,55 +192,62 @@ func getInterview(w http.ResponseWriter, r *http.Request) {
 func createInterview(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var interview models.Interview
+	var err error
 	_ = json.NewDecoder(r.Body).Decode(&interview)
 
-	interviews = append(interviews, interview)
+	collection := client.Database("interview-app").Collection("interviews")
+	_, err = collection.InsertOne(context.TODO(), interview)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	json.NewEncoder(w).Encode(interview)
 
 }
 
-func updateInterview(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+// func updateInterview(w http.ResponseWriter, r *http.Request) {
+// 	w.Header().Set("Content-Type", "application/json")
 
-	// get params
-	params := mux.Vars(r)
+// 	// get params
+// 	params := mux.Vars(r)
 
-	for index, item := range interviews {
-		if item.ID == params["id"] {
-			// delete's slice
-			interviews = append(interviews[:index], interviews[index+1:]...)
+// 	for index, item := range interviews {
+// 		if item.ID == params["id"] {
+// 			// delete's slice
+// 			interviews = append(interviews[:index], interviews[index+1:]...)
 
-			// create's creation
-			var interview models.Interview
-			_ = json.NewDecoder(r.Body).Decode(&interview)
+// 			// create's creation
+// 			var interview models.Interview
+// 			_ = json.NewDecoder(r.Body).Decode(&interview)
 
-			interview.ID = params["id"]
-			interviews = append(interviews, interview)
-			json.NewEncoder(w).Encode(interview)
-			return
-		}
-	}
-	json.NewEncoder(w).Encode(interviews)
-}
+// 			interview.ID = params["id"]
+// 			interviews = append(interviews, interview)
+// 			json.NewEncoder(w).Encode(interview)
+// 			return
+// 		}
+// 	}
+// 	json.NewEncoder(w).Encode(interviews)
+// }
 
-func deleteInterview(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+// func deleteInterview(w http.ResponseWriter, r *http.Request) {
+// 	w.Header().Set("Content-Type", "application/json")
 
-	// get params
-	params := mux.Vars(r)
+// 	// get params
+// 	params := mux.Vars(r)
 
-	for index, item := range interviews {
-		if item.ID == params["id"] {
-			interviews = append(interviews[:index], interviews[index+1:]...)
-			break
-		}
-	}
-	json.NewEncoder(w).Encode(interviews)
-}
+// 	for index, item := range interviews {
+// 		if item.ID == params["id"] {
+// 			interviews = append(interviews[:index], interviews[index+1:]...)
+// 			break
+// 		}
+// 	}
+// 	json.NewEncoder(w).Encode(interviews)
+// }
 
 func createSchedule(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var schedule models.Schedule
+
 	_ = json.NewDecoder(r.Body).Decode(&schedule)
 
 	schedules = append(schedules, schedule...)
@@ -219,16 +263,28 @@ func getSchedule(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(schedules)
 }
 
+var client *mongo.Client
+var ctx context.Context
+var cancel context.CancelFunc
+
 func main() {
+
+	//// DATABASE SET UP
+	var err error
+	ctx, cancel = context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	client, err = mongo.Connect(ctx, options.Client().ApplyURI(
+		"mongodb+srv://jim:fvS4lESuxYbsRDA1@cluster0.evv74.mongodb.net/interview-app?retryWrites=true&w=majority",
+	))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = client.Ping(context.TODO(), nil)
+
+	//// DATABASE SET UP
 	// init mux router
 	router := mux.NewRouter()
-
-	// dummy data @ todo - implement DB
-
-	users = append(users, "Bob")
-	users = append(users, "Alice")
-	users = append(users, "Carrot")
-	users = append(users, "Dan")
 
 	// interviews = append(interviews, genInterviews(10)...)
 
@@ -242,7 +298,7 @@ func main() {
 	// router.HandleFunc("/api/user/{id}", deleteUser).Methods("DELETE")
 
 	router.HandleFunc("/api/interviews", getInterviews).Methods("GET")
-	router.HandleFunc("/api/interview/{id}", getInterview).Methods("GET")
+	// router.HandleFunc("/api/interview/{id}", getInterview).Methods("GET")
 	// router.HandleFunc("/api/interview/user/{id}", getUserInterview).Methods("GET")
 	router.HandleFunc("/api/interview", createInterview).Methods("POST")
 	// router.HandleFunc("/api/interview/{id}", updateInterview).Methods("PUT")
