@@ -17,6 +17,7 @@ import (
 
 	"github.com/rs/cors"
 
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -146,23 +147,27 @@ func getInterviews(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// func getInterview(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Content-Type", "application/json")
+func getInterview(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 
-// 	// get params
-// 	params := mux.Vars(r)
+	// get params
+	params := mux.Vars(r)
 
-// 	// loop thhru users, find with id
-// 	// for _ + for item in users
-// 	for _, item := range interviews {
-// 		if item.ID == params["id"] {
-// 			json.NewEncoder(w).Encode(item)
-// 			return
-// 		}
-// 	}
+	filter := bson.D{{"id", params["id"]}}
 
-// 	json.NewEncoder(w).Encode(&models.Interview{})
-// }
+	collection := client.Database("interview-app").Collection("interviews")
+
+	var interview models.Interview
+
+	err := collection.FindOne(context.TODO(), filter).Decode(&interview)
+	if err != nil {
+		fmt.Println("Finding document ERROR:", err)
+		json.NewEncoder(w).Encode(&models.Interview{})
+	} else {
+		json.NewEncoder(w).Encode(interview)
+	}
+
+}
 
 // get interviews by user ID
 // currently useless with user Strings
@@ -205,44 +210,55 @@ func createInterview(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// func updateInterview(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Content-Type", "application/json")
+func updateInterview(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 
-// 	// get params
-// 	params := mux.Vars(r)
+	// get params
+	params := mux.Vars(r)
 
-// 	for index, item := range interviews {
-// 		if item.ID == params["id"] {
-// 			// delete's slice
-// 			interviews = append(interviews[:index], interviews[index+1:]...)
+	filter := bson.D{{"id", params["id"]}}
 
-// 			// create's creation
-// 			var interview models.Interview
-// 			_ = json.NewDecoder(r.Body).Decode(&interview)
+	var interview models.Interview
+	_ = json.NewDecoder(r.Body).Decode(&interview)
 
-// 			interview.ID = params["id"]
-// 			interviews = append(interviews, interview)
-// 			json.NewEncoder(w).Encode(interview)
-// 			return
-// 		}
-// 	}
-// 	json.NewEncoder(w).Encode(interviews)
-// }
+	update := bson.D{
+		{
+			"$set", bson.D{
+				{"id", interview.ID},
+				{"interviewer", interview.Interviewer},
+				{"interviewee", interview.Interviewee},
+				{"questionData", interview.QuestionData},
+			},
+		},
+	}
 
-// func deleteInterview(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Content-Type", "application/json")
+	collection := client.Database("interview-app").Collection("interviews")
+	_, err := collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-// 	// get params
-// 	params := mux.Vars(r)
+	// json.NewEncoder(w).Encode(interviews)
+}
 
-// 	for index, item := range interviews {
-// 		if item.ID == params["id"] {
-// 			interviews = append(interviews[:index], interviews[index+1:]...)
-// 			break
-// 		}
-// 	}
-// 	json.NewEncoder(w).Encode(interviews)
-// }
+func deleteInterview(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	// get params
+	params := mux.Vars(r)
+
+	filter := bson.D{{"id", params["id"]}}
+
+	collection := client.Database("interview-app").Collection("interviews")
+
+	err := collection.FindOneAndDelete(context.TODO(), filter)
+	if err != nil {
+		fmt.Println("Finding document ERROR:", err)
+	} else {
+		fmt.Println("Interview deleted")
+	}
+
+}
 
 func createSchedule(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -271,11 +287,15 @@ func main() {
 
 	//// DATABASE SET UP
 	var err error
+	env := godotenv.Load()
+	if env != nil {
+		log.Fatal("Error loading .env file")
+	}
+	DB := os.Getenv("DBCONN")
+
 	ctx, cancel = context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	client, err = mongo.Connect(ctx, options.Client().ApplyURI(
-		"mongodb+srv://jim:fvS4lESuxYbsRDA1@cluster0.evv74.mongodb.net/interview-app?retryWrites=true&w=majority",
-	))
+	client, err = mongo.Connect(ctx, options.Client().ApplyURI(DB))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -298,11 +318,11 @@ func main() {
 	// router.HandleFunc("/api/user/{id}", deleteUser).Methods("DELETE")
 
 	router.HandleFunc("/api/interviews", getInterviews).Methods("GET")
-	// router.HandleFunc("/api/interview/{id}", getInterview).Methods("GET")
+	router.HandleFunc("/api/interview/{id}", getInterview).Methods("GET")
 	// router.HandleFunc("/api/interview/user/{id}", getUserInterview).Methods("GET")
 	router.HandleFunc("/api/interview", createInterview).Methods("POST")
-	// router.HandleFunc("/api/interview/{id}", updateInterview).Methods("PUT")
-	// router.HandleFunc("/api/interview/{id}", deleteInterview).Methods("DELETE")
+	router.HandleFunc("/api/interview/{id}", updateInterview).Methods("PUT")
+	router.HandleFunc("/api/interview/{id}", deleteInterview).Methods("DELETE")
 
 	router.HandleFunc("/api/schedule", getSchedule).Methods("GET")
 	router.HandleFunc("/api/schedule", createSchedule).Methods("POST")
