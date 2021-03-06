@@ -30,85 +30,6 @@ var users []string
 
 var schedules models.Schedule
 
-// func getUsers(w http.ResponseWriter, r *http.Request) {
-// 	// set header
-// 	w.Header().Set("Content-Type", "application/json")
-
-// 	//encode users into json
-// 	json.NewEncoder(w).Encode(users)
-// }
-
-// func getUser(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Content-Type", "application/json")
-
-// 	// get params
-// 	params := mux.Vars(r)
-
-// 	// loop thhru users, find with idinterviews
-// 	// for _ + for item in users
-// 	for _, item := range users {
-// 		if item.ID == params["id"] {
-// 			json.NewEncoder(w).Encode(item)
-// 			return
-// 		}
-// 	}
-
-// 	json.NewEncoder(w).Encode(&models.User{})
-
-// }
-
-// func createUser(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Content-Type", "application/json")
-// 	var user models.User
-// 	_ = json.NewDecoder(r.Body).Decode(&user)
-
-// 	user.ID = strconv.Itoa(rand.Intn(1000000))
-
-// 	users = append(users, user)
-// 	json.NewEncoder(w).Encode(user)
-
-// }
-
-// // // combintation of delete + create
-// func updateUser(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Content-Type", "application/json")
-
-// 	// get params
-// 	params := mux.Vars(r)
-
-// 	for index, item := range users {
-// 		if item.ID == params["id"] {
-// 			// delete's slice
-// 			users = append(users[:index], users[index+1:]...)
-
-// 			// create's creation
-// 			var user models.User
-// 			_ = json.NewDecoder(r.Body).Decode(&user)
-
-// 			user.ID = params["id"]
-// 			users = append(users, user)
-// 			json.NewEncoder(w).Encode(user)
-// 			return
-// 		}
-// 	}
-// 	json.NewEncoder(w).Encode(users)
-// }
-
-// func deleteUser(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Content-Type", "application/json")
-
-// 	// get params
-// 	params := mux.Vars(r)
-
-// 	for index, item := range users {
-// 		if item.ID == params["id"] {
-// 			users = append(users[:index], users[index+1:]...)
-// 			break
-// 		}
-// 	}
-// 	json.NewEncoder(w).Encode(users)
-// }
-
 // API for interviews
 func getInterviews(w http.ResponseWriter, r *http.Request) {
 	// set header
@@ -174,23 +95,22 @@ func getInterview(w http.ResponseWriter, r *http.Request) {
 // func getUserInterview(w http.ResponseWriter, r *http.Request) {
 // 	w.Header().Set("Content-Type", "application/json")
 
-// 	// get params
-// 	params := mux.Vars(r)
+// 		// get params
+// 		params := mux.Vars(r)
 
-// 	// loop thhru users, find with id
-// 	// for _ + for item in users
-// 	var temp []models.Interview
+// 		filter := bson.D{{"id", params["id"]}}
 
-// 	for _, item := range interviews {
-// 		for _, each := range item.Party {
-// 			if each.ID == params["id"] {
-// 				temp = append(temp, item)
-// 			}
+// 		collection := client.Database("interview-app").Collection("interviews")
+
+// 		var interview models.Interview
+
+// 		err := collection.FindOne(context.TODO(), filter).Decode(&interview)
+// 		if err != nil {
+// 			fmt.Println("Finding document ERROR:", err)
+// 			json.NewEncoder(w).Encode(&models.Interview{})
+// 		} else {
+// 			json.NewEncoder(w).Encode(interview)
 // 		}
-
-// 	}
-
-// 	json.NewEncoder(w).Encode(&temp)
 
 // }
 
@@ -238,7 +158,6 @@ func updateInterview(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	// json.NewEncoder(w).Encode(interviews)
 }
 
 func deleteInterview(w http.ResponseWriter, r *http.Request) {
@@ -303,19 +222,9 @@ func main() {
 	err = client.Ping(context.TODO(), nil)
 
 	//// DATABASE SET UP
+
 	// init mux router
 	router := mux.NewRouter()
-
-	// interviews = append(interviews, genInterviews(10)...)
-
-	// @ TODO: Figure out interview struct inside User struct
-
-	// user route handlers / endpoints
-	// router.HandleFunc("/api/users", getUsers).Methods("GET")
-	// router.HandleFunc("/api/user/{id}", getUser).Methods("GET")
-	// router.HandleFunc("/api/user", createUser).Methods("POST")
-	// router.HandleFunc("/api/user/{id}", updateUser).Methods("PUT")
-	// router.HandleFunc("/api/user/{id}", deleteUser).Methods("DELETE")
 
 	router.HandleFunc("/api/interviews", getInterviews).Methods("GET")
 	router.HandleFunc("/api/interview/{id}", getInterview).Methods("GET")
