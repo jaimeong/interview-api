@@ -285,6 +285,8 @@ var cancel context.CancelFunc
 
 func main() {
 
+	fmt.Println("Hello World")
+
 	//// DATABASE SET UP
 	var err error
 	env := godotenv.Load()

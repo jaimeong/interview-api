@@ -36,7 +36,10 @@ const Interviews = function () {
         console.log(JSON.stringify(data));
         axios.post('http://localhost:8000/api/interview', data)
         // complete async post request then redirect user to detailed interview page
-        .then((res) => console.log(res));
+        .then((res) => {
+            console.log(res.data)
+            window.location = `http://localhost:3000/api/interviews/${res.data.id}`
+        });
     }
 
     return (
