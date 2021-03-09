@@ -30,7 +30,9 @@ const DeleteInterview = () => {
     function handleDelete() {
         if(input === id) {
             axios.delete(`http://localhost:8000/api/interview/${id}`)
-            .then((res) => console.log(res));
+            .then(() => {
+                window.location = '/';
+            });
         }
     }
 
