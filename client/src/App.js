@@ -11,6 +11,7 @@ import Dashboard from './components/Dashboard'
 import DetailedInterview from './components/DetailedInterview'
 import Schedule from './components/Schedule'
 import DeleteInterview from './components/DeleteInterview'
+import Password from './components/Password'
 
 function App() {
   return (
@@ -25,8 +26,11 @@ function App() {
           <Route path='/api/schedule'>
             <Schedule />
           </Route>
-          <Route path='/'>
+          <Route path='/dashboard'>
             <Dashboard />
+          </Route>
+          <Route path='/'>
+            <Password />
           </Route>
         </Switch>
       </Router>

@@ -19,7 +19,7 @@ $lato: 'Lato', sans-serif;
     }
 }
 
-.saved-btn, .update-btn, .add-btn, .completed-btn, .create-interview-btn {
+.saved-btn, .update-btn, .add-btn, .completed-btn, .create-interview-btn, .password-btn {
     background: none;
     border: none;
     padding: 2% 5%;
@@ -41,6 +41,10 @@ $lato: 'Lato', sans-serif;
 
 .saved-btn {background: green};
 .update-btn {background: orange};
+.password-btn{
+    background: linear-gradient(to right, #bdc3c7, #2c3e50);
+    padding: 1% 3%;
+}
 .add-btn {
     background: blue;
     padding: 1% 3%;
