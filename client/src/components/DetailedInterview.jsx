@@ -38,8 +38,7 @@ const DetailedInterview = () => {
         
         axios.get(`http://localhost:8000/api/interview/${id}`)
         .then((res) => {
-            setData(res.data);
-            console.log(data);
+            window.location = '/';
         })
     }, [])
     return (
