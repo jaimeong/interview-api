@@ -91,27 +91,73 @@ func getInterview(w http.ResponseWriter, r *http.Request) {
 
 // get interviews by user ID
 // currently useless with user Strings
-// func getUserInterview(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Content-Type", "application/json")
+func getUserInterview(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 
-// 		// get params
-// 		params := mux.Vars(r)
+	// get params
+	params := mux.Vars(r)
+	collection := client.Database("interview-app").Collection("interviews")
+	var interviews []models.Interview
 
-// 		filter := bson.D{{"id", params["id"]}}
+	// filter via interviewee
+	intervieweeFilter := bson.D{{"interviewee", params["id"]}}
+	intervieweeCursor, err := collection.Find(context.TODO(), intervieweeFilter)
 
-// 		collection := client.Database("interview-app").Collection("interviews")
+	if err != nil {
+		fmt.Println("Finding all documents ERROR:", err)
+		defer intervieweeCursor.Close(ctx)
+	} else {
 
-// 		var interview models.Interview
+		// iterate over docs using Next()
+		for intervieweeCursor.Next(ctx) {
+			// Declare a result BSON object
+			var result models.Interview
+			err := intervieweeCursor.Decode(&result)
 
-// 		err := collection.FindOne(context.TODO(), filter).Decode(&interview)
-// 		if err != nil {
-// 			fmt.Println("Finding document ERROR:", err)
-// 			json.NewEncoder(w).Encode(&models.Interview{})
-// 		} else {
-// 			json.NewEncoder(w).Encode(interview)
-// 		}
+			// If there is a cursor.Decode error
+			if err != nil {
+				fmt.Println("cursor.Next() error:", err)
+				os.Exit(1)
 
-// }
+				// If there are no cursor.Decode errors
+			} else {
+				interviews = append(interviews, result)
+				// fmt.Println("\nresult type:", reflect.TypeOf(result))
+				// fmt.Println("result:", result)
+			}
+		}
+	}
+
+	interviewerFilter := bson.D{{"interviewer", params["id"]}}
+	interviewerCursor, err := collection.Find(context.TODO(), interviewerFilter)
+
+	if err != nil {
+		fmt.Println("Finding all documents ERROR:", err)
+		defer interviewerCursor.Close(ctx)
+	} else {
+
+		// iterate over docs using Next()
+		for interviewerCursor.Next(ctx) {
+			// Declare a result BSON object
+			var result models.Interview
+			err := interviewerCursor.Decode(&result)
+
+			// If there is a cursor.Decode error
+			if err != nil {
+				fmt.Println("cursor.Next() error:", err)
+				os.Exit(1)
+
+				// If there are no cursor.Decode errors
+			} else {
+				interviews = append(interviews, result)
+				// fmt.Println("\nresult type:", reflect.TypeOf(result))
+				// fmt.Println("result:", result)
+			}
+		}
+	}
+
+	json.NewEncoder(w).Encode(interviews)
+}
 
 func createInterview(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -261,7 +307,7 @@ func main() {
 
 	router.HandleFunc("/api/interviews", getInterviews).Methods("GET")
 	router.HandleFunc("/api/interview/{id}", getInterview).Methods("GET")
-	// router.HandleFunc("/api/interview/user/{id}", getUserInterview).Methods("GET")
+	router.HandleFunc("/api/interview/user/{id}", getUserInterview).Methods("GET")
 	router.HandleFunc("/api/interview", createInterview).Methods("POST")
 	router.HandleFunc("/api/interview/{id}", updateInterview).Methods("PUT")
 	router.HandleFunc("/api/interview/{id}", deleteInterview).Methods("DELETE")
