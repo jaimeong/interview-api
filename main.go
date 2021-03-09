@@ -22,27 +22,22 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// init users as User slice (list)
-var users []string
-
-// var interviews []models.Interview
-
-var schedules models.Schedule
-
-// API for interviews
+// Gets all interviews from database
 func getInterviews(w http.ResponseWriter, r *http.Request) {
-	// set header
+	// set JSON header type
 	w.Header().Set("Content-Type", "application/json")
 
+	// establish which DB collection to query from
 	collection := client.Database("interview-app").Collection("interviews")
+
+	// db.collection.find returns a cursor, an iterable
 	cursor, err := collection.Find(context.TODO(), bson.D{})
 
-	// Find() method raised an error
+	// if no errors, iterate thru cursor and add elements to interviews
 	if err != nil {
 		fmt.Println("Finding all documents ERROR:", err)
 		defer cursor.Close(ctx)
 	} else {
-
 		var interviews []models.Interview
 		// iterate over docs using Next()
 		for cursor.Next(ctx) {
@@ -50,27 +45,23 @@ func getInterviews(w http.ResponseWriter, r *http.Request) {
 			var result models.Interview
 			err := cursor.Decode(&result)
 
-			// If there is a cursor.Decode error
 			if err != nil {
 				fmt.Println("cursor.Next() error:", err)
 				os.Exit(1)
-
-				// If there are no cursor.Decode errors
 			} else {
 				interviews = append(interviews, result)
-				// fmt.Println("\nresult type:", reflect.TypeOf(result))
-				// fmt.Println("result:", result)
 			}
 		}
-		// //encode users into json
+
+		// encode and return interviews
 		json.NewEncoder(w).Encode(interviews)
 	}
 }
 
+// Get interview by id parameter
 func getInterview(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	// get params
 	params := mux.Vars(r)
 
 	filter := bson.D{{"id", params["id"]}}
@@ -90,11 +81,9 @@ func getInterview(w http.ResponseWriter, r *http.Request) {
 }
 
 // get interviews by user ID
-// currently useless with user Strings
 func getUserInterview(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	// get params
 	params := mux.Vars(r)
 	collection := client.Database("interview-app").Collection("interviews")
 	var interviews []models.Interview
@@ -107,27 +96,21 @@ func getUserInterview(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Finding all documents ERROR:", err)
 		defer intervieweeCursor.Close(ctx)
 	} else {
-
-		// iterate over docs using Next()
 		for intervieweeCursor.Next(ctx) {
-			// Declare a result BSON object
 			var result models.Interview
 			err := intervieweeCursor.Decode(&result)
 
-			// If there is a cursor.Decode error
 			if err != nil {
 				fmt.Println("cursor.Next() error:", err)
 				os.Exit(1)
 
-				// If there are no cursor.Decode errors
 			} else {
 				interviews = append(interviews, result)
-				// fmt.Println("\nresult type:", reflect.TypeOf(result))
-				// fmt.Println("result:", result)
 			}
 		}
 	}
 
+	// filter via interviewer
 	interviewerFilter := bson.D{{"interviewer", params["id"]}}
 	interviewerCursor, err := collection.Find(context.TODO(), interviewerFilter)
 
@@ -135,30 +118,24 @@ func getUserInterview(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Finding all documents ERROR:", err)
 		defer interviewerCursor.Close(ctx)
 	} else {
-
-		// iterate over docs using Next()
 		for interviewerCursor.Next(ctx) {
-			// Declare a result BSON object
 			var result models.Interview
 			err := interviewerCursor.Decode(&result)
 
-			// If there is a cursor.Decode error
 			if err != nil {
 				fmt.Println("cursor.Next() error:", err)
 				os.Exit(1)
 
-				// If there are no cursor.Decode errors
 			} else {
 				interviews = append(interviews, result)
-				// fmt.Println("\nresult type:", reflect.TypeOf(result))
-				// fmt.Println("result:", result)
 			}
 		}
 	}
-
 	json.NewEncoder(w).Encode(interviews)
 }
 
+// Create an interview by decoding POSTed JSON via interview model
+// Inserts into database afterwards
 func createInterview(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var interview models.Interview
@@ -172,13 +149,11 @@ func createInterview(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(interview)
-
 }
 
+// Update interview by decoding PUTed JSON via interview model
 func updateInterview(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
-	// get params
 	params := mux.Vars(r)
 
 	filter := bson.D{{"id", params["id"]}}
@@ -205,10 +180,10 @@ func updateInterview(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// Delete interviewe by id, no return
 func deleteInterview(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	// get params
 	params := mux.Vars(r)
 
 	filter := bson.D{{"id", params["id"]}}
@@ -224,6 +199,7 @@ func deleteInterview(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// Create schedule by decoding POSTed JSON via schedule model
 func createSchedule(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var schedule models.Schedule
@@ -241,38 +217,30 @@ func createSchedule(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// Get all schedules
 func getSchedule(w http.ResponseWriter, r *http.Request) {
-	// set header
 	w.Header().Set("Content-Type", "application/json")
 	collection := client.Database("interview-app").Collection("schedule")
 	cursor, err := collection.Find(context.TODO(), bson.D{})
 
-	// Find() method raised an error
 	if err != nil {
 		fmt.Println("Finding all documents ERROR:", err)
 		defer cursor.Close(ctx)
 	} else {
 
 		var schedules []models.Schedule
-		// iterate over docs using Next()
 		for cursor.Next(ctx) {
-			// Declare a result BSON object
 			var result models.Schedule
 			err := cursor.Decode(&result)
 
-			// If there is a cursor.Decode error
 			if err != nil {
 				fmt.Println("cursor.Next() error:", err)
 				os.Exit(1)
 
-				// If there are no cursor.Decode errors
 			} else {
 				schedules = append(schedules, result)
-				// fmt.Println("\nresult type:", reflect.TypeOf(result))
-				// fmt.Println("result:", result)
 			}
 		}
-		// //encode users into json
 		json.NewEncoder(w).Encode(schedules)
 	}
 }
@@ -282,8 +250,7 @@ var ctx context.Context
 var cancel context.CancelFunc
 
 func main() {
-
-	//// DATABASE SET UP
+	//// DATABASE SET UP ////
 	var err error
 	env := godotenv.Load()
 	if env != nil {
@@ -300,9 +267,8 @@ func main() {
 
 	err = client.Ping(context.TODO(), nil)
 
-	//// DATABASE SET UP
+	//// DATABASE SET UP ////
 
-	// init mux router
 	router := mux.NewRouter()
 
 	router.HandleFunc("/api/interviews", getInterviews).Methods("GET")
