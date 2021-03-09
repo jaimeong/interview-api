@@ -2,7 +2,7 @@ package models
 
 import "time"
 
-type Schedule []struct {
+type Schedule struct {
 	CalendarID string    `json:"calendarId"`
 	Category   string    `json:"category"`
 	Title      string    `json:"title"`
