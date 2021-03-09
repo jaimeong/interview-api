@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github/interview-api/models"
 	"os"
 	"time"
 
@@ -12,8 +13,6 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-
-	"github.com/jimmyjongs/interview-api/models"
 
 	"github.com/rs/cors"
 
@@ -184,8 +183,14 @@ func createSchedule(w http.ResponseWriter, r *http.Request) {
 	var schedule models.Schedule
 
 	_ = json.NewDecoder(r.Body).Decode(&schedule)
+	var err error
 
-	schedules = append(schedules, schedule...)
+	collection := client.Database("interview-app").Collection("schedule")
+	_, err = collection.InsertOne(context.TODO(), schedule)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	json.NewEncoder(w).Encode(schedule)
 
 }
@@ -193,9 +198,37 @@ func createSchedule(w http.ResponseWriter, r *http.Request) {
 func getSchedule(w http.ResponseWriter, r *http.Request) {
 	// set header
 	w.Header().Set("Content-Type", "application/json")
+	collection := client.Database("interview-app").Collection("schedule")
+	cursor, err := collection.Find(context.TODO(), bson.D{})
 
-	//encode users into json
-	json.NewEncoder(w).Encode(schedules)
+	// Find() method raised an error
+	if err != nil {
+		fmt.Println("Finding all documents ERROR:", err)
+		defer cursor.Close(ctx)
+	} else {
+
+		var schedules []models.Schedule
+		// iterate over docs using Next()
+		for cursor.Next(ctx) {
+			// Declare a result BSON object
+			var result models.Schedule
+			err := cursor.Decode(&result)
+
+			// If there is a cursor.Decode error
+			if err != nil {
+				fmt.Println("cursor.Next() error:", err)
+				os.Exit(1)
+
+				// If there are no cursor.Decode errors
+			} else {
+				schedules = append(schedules, result)
+				// fmt.Println("\nresult type:", reflect.TypeOf(result))
+				// fmt.Println("result:", result)
+			}
+		}
+		// //encode users into json
+		json.NewEncoder(w).Encode(schedules)
+	}
 }
 
 var client *mongo.Client
@@ -203,8 +236,6 @@ var ctx context.Context
 var cancel context.CancelFunc
 
 func main() {
-
-	fmt.Println("Hello World")
 
 	//// DATABASE SET UP
 	var err error
@@ -237,6 +268,11 @@ func main() {
 
 	router.HandleFunc("/api/schedule", getSchedule).Methods("GET")
 	router.HandleFunc("/api/schedule", createSchedule).Methods("POST")
-	handler := cors.Default().Handler(router)
+	c := cors.New(cors.Options{
+		AllowedMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete},
+	})
+
+	handler := c.Handler(router)
+
 	log.Fatal(http.ListenAndServe(":8000", handler))
 }
