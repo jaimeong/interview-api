@@ -30,9 +30,11 @@ const DetailedInterview = () => {
         ]
 }
     const [data, setData] = useState(initialState);
+    const [id, setId] = useState('');
     useEffect(() => {
         let url = window.location.href.split('/');
         let id = url[url.length - 1];
+        setId(id);
         
         axios.get(`http://localhost:8000/api/interview/${id}`)
         .then((res) => {
@@ -63,6 +65,10 @@ const DetailedInterview = () => {
             <h1>Interviewee: {data.interviewee}</h1>
             <h1>Interviewer: {data.interviewer}</h1>
             <p>{data.date.toString().slice(0, 10)}</p>
+            <div className='interaction-buttons'>
+                <a href={`/api/interview/delete/` + id}>Delete</a>
+                <a href={`/api/interview/update/` + id}>Update</a>
+            </div>
             {data.questionData.map((item, index) => {
                 return (
                     <div className='detailed-question' key={index}>

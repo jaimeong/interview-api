@@ -328,6 +328,10 @@ func main() {
 
 	router.HandleFunc("/api/schedule", getSchedule).Methods("GET")
 	router.HandleFunc("/api/schedule", createSchedule).Methods("POST")
-	handler := cors.Default().Handler(router)
+	c := cors.New(cors.Options{
+		AllowedMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete},
+	})
+
+	handler := c.Handler(router)
 	log.Fatal(http.ListenAndServe(":8000", handler))
 }

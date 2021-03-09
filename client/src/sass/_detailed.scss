@@ -39,3 +39,25 @@ $lato: 'Lato', sans-serif;
         }
     }
 }
+
+.interaction-buttons {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+
+    a {
+        margin: 0 5%;
+    }
+}
+
+.delete-interaction {
+    display: flex;
+    flex-direction: column;
+    height: 300px;
+    justify-content: space-around;
+    align-items: center;
+
+    input {
+        padding: 1% 3%;
+    }
+}
