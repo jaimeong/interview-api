@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import '../sass/index.scss';
 
 const DetailedInterview = () => {
     const initialState = {
         id: "utgt-JfIs3",
-        interviewee: "Henry",
+        interviewee: "",
         date: "2021-03-03T01:36:13.895Z",
-        interviewer: "Johnny",
+        interviewer: "",
         questionData: [
             {
                 id: 0,
@@ -29,7 +30,16 @@ const DetailedInterview = () => {
         ]
 }
     const [data, setData] = useState(initialState);
-    console.log(data);
+    useEffect(() => {
+        let url = window.location.href.split('/');
+        let id = url[url.length - 1];
+        
+        axios.get(`http://localhost:8000/api/interview/${id}`)
+        .then((res) => {
+            setData(res.data);
+            console.log(data);
+        })
+    }, [])
     return (
         <div>
             <div class='interview-nav'>
