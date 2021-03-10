@@ -27,11 +27,11 @@ const UpdateInterview = () => {
     function handleUpdate() {
         // pack the data to be sent over to backend api
         let data = {id: interviewData.id, interviewee: interviewee, date: interviewData.date, interviewer: interviewer, questionData: questionData}
-        console.log(data);
+
         axios.put(`http://localhost:8000/api/interview/${id}`, data)
         // complete async post request then redirect user to detailed interview page
         .then((res) => {
-            window.location = `http://localhost:3000/api/interviews/${res.data.id}`
+            window.location = `http://localhost:3000/api/interviews/${id}`
         });
     }
 
