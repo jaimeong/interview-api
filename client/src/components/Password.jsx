@@ -23,7 +23,7 @@ const Password = () => {
         <div className='password-container'>
             <h1>Please enter password</h1>
             <div className='password-div'>
-                <input type='text' placeholder='Password' value={pass} onChange={(e) => handleInput(e)}/>
+                <input type='password' placeholder='Password' value={pass} onChange={(e) => handleInput(e)}/>
                 <button className='password-btn' onClick={handleSubmit}>Submit</button>
                 <p ref={error}></p>
             </div>

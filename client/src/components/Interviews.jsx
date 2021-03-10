@@ -45,7 +45,7 @@ const Interviews = function () {
     return (
         <div className='interview-container'>
             <div class='interview-nav'>
-                <a className='home-btn' href='/'>
+                <a className='home-btn' href='/dashboard'>
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                     <polyline points="5 12 3 12 12 3 21 12 19 12" />
@@ -66,7 +66,7 @@ const Interviews = function () {
                 </div>
             </form>
             <div className='question-box' ref={questionContainer}>
-                {[...Array(counter)].map((item, index) => <Question key={index} setData={handlePassedData} setQuestionData={setQuestionData} index={index} questionData={questionData} />)}
+                {[...Array(counter)].map((item, index) => <Question key={index} setData={handlePassedData} setQuestionData={setQuestionData} index={index} questionData={questionData} update={false} />)}
             </div>
             <div className='btns'>
             <button className='add-btn' onClick={addQuestion}>Add question</button>

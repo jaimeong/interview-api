@@ -12,12 +12,14 @@ import DetailedInterview from './components/DetailedInterview'
 import Schedule from './components/Schedule'
 import DeleteInterview from './components/DeleteInterview'
 import Password from './components/Password'
+import UpdateInterview from './components/UpdateInterview'
 
 function App() {
   return (
     <div className="App">
       <Router>
         <Switch>
+        <Route path='/api/interview/update/:id' component={UpdateInterview} />
           <Route path='/api/interview/delete/:id' component={DeleteInterview} />
           <Route path='/api/interviews/:id' component={DetailedInterview} />
           <Route path='/api/interviews/'>

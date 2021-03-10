@@ -31,7 +31,7 @@ const DeleteInterview = () => {
         if(input === id) {
             axios.delete(`http://localhost:8000/api/interview/${id}`)
             .then(() => {
-                window.location = '/';
+                window.location = '/dashboard';
             });
         }
     }
