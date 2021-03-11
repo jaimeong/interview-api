@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 const Password = () => {
     const [pass, setPass] = useState('');
@@ -19,13 +19,36 @@ const Password = () => {
             error.current.style.color = 'red'
         }
     }
+
+    useEffect((e) => {
+        const listener = (event) => {
+            if(event.code === 'Enter') {
+                handleSubmit();
+            }
+        }
+        document.addEventListener("keydown", listener);
+        return () => {
+          document.removeEventListener("keydown", listener);
+        }; 
+    })
     return (
         <div className='password-container'>
-            <h1>Please enter password</h1>
-            <div className='password-div'>
-                <input type='password' placeholder='Password' value={pass} onChange={(e) => handleInput(e)}/>
-                <button className='password-btn' onClick={handleSubmit}>Submit</button>
-                <p ref={error}></p>
+            <div className='password-intro'>
+                <h1>Welcome to Horse Field Interviews</h1>
+                <img src='https://broncoathletics.com/images/logos/site/site.png' />
+                <div>
+                <p>Horse Field Interviews is a web application that serves the purpose of conducting mock interviews with friends.</p>
+                <p>Be better prepared for your next interview by recording your questions, responses, and notes.</p>
+                <p>We give you the ability to review your interviews and gain feedback on areas of improvement!</p>
+                </div>
+            </div>
+            <div className='password-entry'>
+                <h1>Please enter password</h1>
+                <div className='password-div'>
+                    <input type='password' placeholder='Password' value={pass} onChange={(e) => handleInput(e)}/>
+                    <button className='password-btn' type='submit' onClick={handleSubmit}>Submit</button>
+                    <p ref={error}></p>
+                </div>
             </div>
         </div>
     )

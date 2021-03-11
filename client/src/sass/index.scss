@@ -2,3 +2,16 @@
 @import './dashboard';
 @import './detailed';
 @import './password';
+
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+$lato: 'Lato', sans-serif;
+
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    font-family: $lato;
+}

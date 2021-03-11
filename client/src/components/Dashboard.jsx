@@ -12,6 +12,7 @@ const Dashboard = () => {
         }
         axios.get('http://localhost:8000/api/interviews')
         .then((res) => setIntialState(res.data));
+        console.log(initialState);
     }, [])
 
 
