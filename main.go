@@ -281,7 +281,7 @@ func main() {
 	router.HandleFunc("/api/schedule", getSchedule).Methods("GET")
 	router.HandleFunc("/api/schedule", createSchedule).Methods("POST")
 	c := cors.New(cors.Options{
-		AllowedMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete},
+		AllowedMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodPut},
 	})
 
 	handler := c.Handler(router)
