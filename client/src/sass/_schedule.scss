@@ -1,0 +1,12 @@
+.nav-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2% 0;
+
+    p {
+        color: #8894db;
+        font-weight: bold;
+        font-family: $lato;
+    }
+}

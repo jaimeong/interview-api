@@ -24,3 +24,13 @@
 .interview-header {
     margin: 5% 0;
 }
+
+.interview-nav_home {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    a:last-child {
+        margin: 2% 0 0 0;
+    }
+}

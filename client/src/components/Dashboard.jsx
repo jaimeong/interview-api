@@ -21,7 +21,10 @@ const Dashboard = () => {
             {loggedIn ? 
             <div>
                 <h1 className='interview-header'>Horse Field Interviews</h1>
+                <div className='interview-nav_home'>
                 <a className='create-interview-btn' href='/api/interviews'>Create Interview</a>
+                <a className='create-interview-btn' href='/api/schedule'>Schedule</a>
+                </div>
                 <div class='dash-interview-container'>
                 {initialState.map((interview, id) => {
                 return (

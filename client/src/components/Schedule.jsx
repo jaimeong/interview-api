@@ -6,32 +6,24 @@ import moment from 'moment';
 // If you use the default popups, use this.
 import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
+import axios from 'axios';
 
 const Schedule = () => {
     const [view, setView] = useState('month');
     const [isToday, setIsToday] = useState('false');
-    const start = new Date();
-    const end = new Date(new Date().setMinutes(start.getMinutes() + 30));
-    const [schedule, setSchedule] = useState([
-        {
-            calendarId: "0",
-            category: "time",
-            isVisible: true,
-            title: "Study",
-            id: "1",
-            body: "Test",
-            bgColor: "purple",
-            start,
-            end,
-            location: "",
-          },
-    ]);
+    const [schedule, setSchedule] = useState([]);
+    const [date, setDate] = useState('');
     const calendar = useRef(null);
     const selectView = useRef(null);
 
     useEffect(() => {
-        console.log(schedule);
-    }, [schedule])
+        setDate(calendar.current.getInstance().getDate()._date)
+        axios.get('http://localhost:8000/api/schedule')
+        .then((res) => {
+            setSchedule(res.data);
+        })
+    }, [])
+
 
     function changeView() {
         let currentView = selectView.current.value;
@@ -46,10 +38,12 @@ const Schedule = () => {
 
     function handlePrev() {
         calendar.current.getInstance().prev();
+        setDate(calendar.current.getInstance().getDate()._date)
     }
 
     function handleNext() {
         calendar.current.getInstance().next();
+        setDate(calendar.current.getInstance().getDate()._date)
     }
 
     function handleToday() {
@@ -64,23 +58,31 @@ const Schedule = () => {
     }
 
     function onBeforeCreateSchedule(scheduleData) {
-        console.log(scheduleData);
 
         const newSchedule = {
             id: String(Math.random()),
             title: scheduleData.title,
-            start: scheduleData.start,
+            start: scheduleData.start.toDate(),
             calendarId: "0",
-            end: scheduleData.end,
+            end: scheduleData.end.toDate(),
             bgColor: "purple",
             isVisible: true,
             category: scheduleData.isAllDay ? "allday" : "time",
             location: scheduleData.location,
         }
+        console.log(newSchedule)
 
+        axios.post('http://localhost:8000/api/schedule', newSchedule)
+        .then((res) => {
+            console.log(res.data);
+        })
         calendar.current.getInstance().createSchedules([newSchedule]);
 
-        setSchedule([...schedule, newSchedule])
+        // if(schedule) {
+        //     setSchedule([...schedule, newSchedule])
+        // } else {
+        //     setSchedule([schedule])
+        // }
     }
 
     function onBeforeDeleteSchedule(res) {
@@ -91,6 +93,24 @@ const Schedule = () => {
 
     return (
         <div>
+        <div class='interview-nav'>
+            <a className='home-btn' href='/dashboard'>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <polyline points="5 12 3 12 12 3 21 12 19 12" />
+                <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+                <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+                </svg>
+            </a>
+            <a href='create-btn' href='/api/interviews/'>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-plus" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <circle cx="12" cy="12" r="9" />
+                <line x1="9" y1="12" x2="15" y2="12" />
+                <line x1="12" y1="9" x2="12" y2="15" />
+                </svg>
+            </a>
+        </div>
         <h1>Schedule</h1>
         <nav>
       <select id="view-select" ref={selectView} onChange={changeView}>
@@ -117,6 +137,7 @@ const Schedule = () => {
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <polyline points="15 6 9 12 15 18" />
         </svg>
+        <p id="current-date">{date.toString().slice(0, 15)}</p>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class="icon icon-tabler icon-tabler-chevron-right"
@@ -134,7 +155,6 @@ const Schedule = () => {
           <polyline points="9 6 15 12 9 18" />
         </svg>
       </div>
-      <p id="current-date"></p>
     </nav>
         <Calendar 
             height="900px"
