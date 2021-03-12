@@ -259,71 +259,6 @@ func main() {
 
 	DB := os.Getenv("DBCONN")
 
-	//// GCP SECRET MANAGER ////
-	// // GCP project in which to store secrets in Secret Manager.
-	// projectID := "interview-app-307320"
-
-	// // Create the client.
-	// ctx := context.Background()
-	// client, err := secretmanager.NewClient(ctx)
-	// if err != nil {
-	// 	log.Fatalf("failed to setup client: %v", err)
-	// }
-
-	// // Create the request to create the secret.
-	// createSecretReq := &secretmanagerpb.CreateSecretRequest{
-	// 	Parent:   fmt.Sprintf("projects/%s", projectID),
-	// 	SecretId: "my-secret",
-	// 	Secret: &secretmanagerpb.Secret{
-	// 		Replication: &secretmanagerpb.Replication{
-	// 			Replication: &secretmanagerpb.Replication_Automatic_{
-	// 				Automatic: &secretmanagerpb.Replication_Automatic{},
-	// 			},
-	// 		},
-	// 	},
-	// }
-
-	// secret, err := client.CreateSecret(ctx, createSecretReq)
-	// if err != nil {
-	// 	log.Fatalf("failed to create secret: %v", err)
-	// }
-
-	// // Declare the payload to store.
-	// payload := []byte("my super secret data")
-
-	// // Build the request.
-	// addSecretVersionReq := &secretmanagerpb.AddSecretVersionRequest{
-	// 	Parent: secret.Name,
-	// 	Payload: &secretmanagerpb.SecretPayload{
-	// 		Data: payload,
-	// 	},
-	// }
-
-	// // Call the API.
-	// version, err := client.AddSecretVersion(ctx, addSecretVersionReq)
-	// if err != nil {
-	// 	log.Fatalf("failed to add secret version: %v", err)
-	// }
-
-	// // Build the request.
-	// accessRequest := &secretmanagerpb.AccessSecretVersionRequest{
-	// 	Name: version.Name,
-	// }
-
-	// // Call the API.
-	// result, err := client.AccessSecretVersion(ctx, accessRequest)
-	// if err != nil {
-	// 	log.Fatalf("failed to access secret version: %v", err)
-	// }
-
-	// // Print the secret payload.
-	// //
-	// // WARNING: Do not print the secret in a production environment - this
-	// // snippet is showing how to access the secret material.
-	// log.Printf("Plaintext: %s", result.Payload.Data)
-
-	// //// GCP SECRET MANAGER ////
-
 	ctx, cancel = context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	client, err = mongo.Connect(ctx, options.Client().ApplyURI(DB))
@@ -346,10 +281,24 @@ func main() {
 
 	router.HandleFunc("/api/schedule", getSchedule).Methods("GET")
 	router.HandleFunc("/api/schedule", createSchedule).Methods("POST")
+
+	// fs := http.FileServer(http.Dir("./client/build"))
+	// http.Handle("/", fs)
+
 	c := cors.New(cors.Options{
 		AllowedMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodPut},
 	})
 
 	handler := c.Handler(router)
-	log.Fatal(http.ListenAndServe(":8000", handler))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+		log.Printf("Defaulting to port %s", port)
+	}
+
+	log.Printf("Listening on port %s", port)
+	if err := http.ListenAndServe(":"+port, handler); err != nil {
+		log.Fatal(err)
+	}
+
 }
