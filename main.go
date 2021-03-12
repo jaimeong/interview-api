@@ -285,9 +285,15 @@ func main() {
 
 	// FRONTEND ROOT ROUTE
 	// required for frontend to front
-	s := http.StripPrefix("/", http.FileServer(http.Dir("./client/build")))
-	router.PathPrefix("/").Handler(s)
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./client/build/")))
+
+	// // Serve static files
+	// router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./build/static/"))))
+
+	// // Serve index page on all unhandled routes
+	// router.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// 	http.ServeFile(w, r, "./client/build/")
+	// })
 
 	c := cors.New(cors.Options{
 		AllowedMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodPut},
