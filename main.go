@@ -272,6 +272,7 @@ func main() {
 
 	router := mux.NewRouter()
 
+	// API ROUTES
 	router.HandleFunc("/api/interviews", getInterviews).Methods("GET")
 	router.HandleFunc("/api/interview/{id}", getInterview).Methods("GET")
 	router.HandleFunc("/api/interview/user/{id}", getUserInterview).Methods("GET")
@@ -282,14 +283,20 @@ func main() {
 	router.HandleFunc("/api/schedule", getSchedule).Methods("GET")
 	router.HandleFunc("/api/schedule", createSchedule).Methods("POST")
 
-	// fs := http.FileServer(http.Dir("./client/build"))
-	// http.Handle("/", fs)
+	// FRONTEND ROOT ROUTE
+	// required for frontend to front
+	s := http.StripPrefix("/", http.FileServer(http.Dir("./client/build")))
+	router.PathPrefix("/").Handler(s)
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./client/build/")))
 
 	c := cors.New(cors.Options{
 		AllowedMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodPut},
 	})
 
 	handler := c.Handler(router)
+
+	// Default to OS PORT environment variable
+	// Used for GAE
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
