@@ -19,13 +19,13 @@ function App() {
     <div className="App">
       <Router>
         <Switch>
-        <Route path='/api/interview/update/:id' component={UpdateInterview} />
-          <Route path='/api/interview/delete/:id' component={DeleteInterview} />
-          <Route path='/api/interviews/:id' component={DetailedInterview} />
-          <Route path='/api/interviews/'>
+        <Route path='/interview/update/:id' component={UpdateInterview} />
+          <Route path='/interview/delete/:id' component={DeleteInterview} />
+          <Route path='/interviews/:id' component={DetailedInterview} />
+          <Route path='/interviews/'>
             <Interviews />
           </Route>
-          <Route path='/api/schedule'>
+          <Route path='/schedule'>
             <Schedule />
           </Route>
           <Route path='/dashboard'>
