@@ -31,7 +31,7 @@ const UpdateInterview = () => {
         axios.put(`http://localhost:8000/api/interview/${id}`, data)
         // complete async post request then redirect user to detailed interview page
         .then((res) => {
-            window.location = `http://localhost:3000/api/interviews/${id}`
+            window.location = `http://localhost:3000/interviews/${id}`
         });
     }
 
