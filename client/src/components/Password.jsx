@@ -37,7 +37,7 @@ const Password = () => {
                 <h1>Welcome to Horse Field Interviews</h1>
                 <img src='https://broncoathletics.com/images/logos/site/site.png' />
                 <div>
-                <p>Horse Field Interviews is a web application that serves the purpose of conducting mock interviews with friends.</p>
+                <p>Horses Field Interviews is a web application that serves the purpose of conducting mock interviews with friends.</p>
                 <p>Be better prepared for your next interview by recording your questions, responses, and notes.</p>
                 <p>We give you the ability to review your interviews and gain feedback on areas of improvement!</p>
                 </div>
