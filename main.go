@@ -285,15 +285,12 @@ func main() {
 
 	// FRONTEND ROOT ROUTE
 	// required for frontend to front
-	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./client/build/")))
 
-	// // Serve static files
-	// router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./build/static/"))))
-
-	// // Serve index page on all unhandled routes
-	// router.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-	// 	http.ServeFile(w, r, "./client/build/")
-	// })
+	router.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// // Serve static files
+		http.ServeFile(w, r, "./client/build/index.html")
+		// router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./build/static/"))))
+	})
 
 	c := cors.New(cors.Options{
 		AllowedMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodPut},
@@ -305,7 +302,7 @@ func main() {
 	// Used for GAE
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "8000"
 		log.Printf("Defaulting to port %s", port)
 	}
 
