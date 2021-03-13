@@ -34,11 +34,11 @@ const Interviews = function () {
         // pack the data to be sent over to backend api
         let data = {id: id, interviewee: interviewee, date: new Date(), interviewer: interviewer, questionData: questionData}
         console.log(JSON.stringify(data));
-        axios.post('http://localhost:8000/api/interview', data)
+        axios.post('https://horsefields.wl.r.appspot.com/api/interview', data)
         // complete async post request then redirect user to detailed interview page
         .then((res) => {
             console.log(res.data)
-            window.location = `http://localhost:3000/interviews/${res.data.id}`
+            window.location = `https://horsefields.wl.r.appspot.com/interviews/${res.data.id}`
         });
     }
 

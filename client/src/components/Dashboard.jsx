@@ -10,7 +10,7 @@ const Dashboard = () => {
         if(logged) {
             setLoggedIn(true);
         }
-        axios.get('http://localhost:8080/api/interviews')
+        axios.get('https://horsefields.wl.r.appspot.com/api/interviews')
         .then((res) => setIntialState(res.data));
         console.log(initialState);
     }, [])

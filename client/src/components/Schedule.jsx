@@ -18,7 +18,7 @@ const Schedule = () => {
 
     useEffect(() => {
         setDate(calendar.current.getInstance().getDate()._date)
-        axios.get('http://localhost:8000/api/schedule')
+        axios.get('https://horsefields.wl.r.appspot.com/api/schedule')
         .then((res) => {
             setSchedule(res.data);
         })
@@ -72,7 +72,7 @@ const Schedule = () => {
         }
         console.log(newSchedule)
 
-        axios.post('http://localhost:8000/api/schedule', newSchedule)
+        axios.post('https://horsefields.wl.r.appspot.com/api/schedule', newSchedule)
         .then((res) => {
             console.log(res.data);
         })
