@@ -38,7 +38,7 @@ const Interviews = function () {
         // complete async post request then redirect user to detailed interview page
         .then((res) => {
             console.log(res.data)
-            window.location = `http://localhost:3000/api/interviews/${res.data.id}`
+            window.location = `http://localhost:3000/interviews/${res.data.id}`
         });
     }
 

@@ -285,11 +285,13 @@ func main() {
 
 	// FRONTEND ROOT ROUTE
 	// required for frontend to front
+
 	router.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// // Serve static files
 		http.ServeFile(w, r, "./client/build/index.html")
 		// router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./build/static/"))))
 	})
+
 	c := cors.New(cors.Options{
 		AllowedMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodPut},
 	})
