@@ -18,7 +18,7 @@ const Schedule = () => {
 
     useEffect(() => {
         setDate(calendar.current.getInstance().getDate()._date)
-        axios.get('http://localhost:8000/api/schedule')
+        axios.get('https://horsefields.wl.r.appspot.com/api/schedule')
         .then((res) => {
             setSchedule(res.data);
         })
@@ -72,7 +72,7 @@ const Schedule = () => {
         }
         console.log(newSchedule)
 
-        axios.post('http://localhost:8000/api/schedule', newSchedule)
+        axios.post('https://horsefields.wl.r.appspot.com/api/schedule', newSchedule)
         .then((res) => {
             console.log(res.data);
         })
@@ -102,7 +102,7 @@ const Schedule = () => {
                 <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
                 </svg>
             </a>
-            <a href='create-btn' href='/api/interviews/'>
+            <a href='create-btn' href='/interviews/'>
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-plus" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                 <circle cx="12" cy="12" r="9" />

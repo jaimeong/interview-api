@@ -36,7 +36,7 @@ const DetailedInterview = () => {
         let id = url[url.length - 1];
         setId(id);
         
-        axios.get(`http://localhost:8000/api/interview/${id}`)
+        axios.get(`https://horsefields.wl.r.appspot.com/api/interview/${id}`)
         .then((res) => {
             setData(res.data);
             console.log(data);
@@ -53,7 +53,7 @@ const DetailedInterview = () => {
                     <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
                     </svg>
                 </a>
-                <a href='create-btn' href='/api/interviews/'>
+                <a href='create-btn' href='/interviews/'>
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-plus" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                     <circle cx="12" cy="12" r="9" />
@@ -61,7 +61,7 @@ const DetailedInterview = () => {
                     <line x1="12" y1="9" x2="12" y2="15" />
                     </svg>
                 </a>
-                <a href='schedule-btn' href='/api/schedule/'>
+                <a href='schedule-btn' href='/schedule/'>
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-event" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                     <rect x="4" y="5" width="16" height="16" rx="2" />
@@ -76,8 +76,8 @@ const DetailedInterview = () => {
             <h1>Interviewer: {data.interviewer}</h1>
             <p>{data.date.toString().slice(0, 10)}</p>
             <div className='interaction-buttons'>
-                <a href={`/api/interview/delete/` + id}>Delete</a>
-                <a href={`/api/interview/update/` + id}>Update</a>
+                <a href={`/interview/delete/` + id}>Delete</a>
+                <a href={`/interview/update/` + id}>Update</a>
             </div>
             {data.questionData.map((item, index) => {
                 return (

@@ -28,10 +28,10 @@ const UpdateInterview = () => {
         // pack the data to be sent over to backend api
         let data = {id: interviewData.id, interviewee: interviewee, date: interviewData.date, interviewer: interviewer, questionData: questionData}
 
-        axios.put(`http://localhost:8000/api/interview/${id}`, data)
+        axios.put(`https://horsefields.wl.r.appspot.com/api/interview/${id}`, data)
         // complete async post request then redirect user to detailed interview page
         .then((res) => {
-            window.location = `http://localhost:3000/api/interviews/${id}`
+            window.location = `https://horsefields.wl.r.appspot.com/interviews/${id}`
         });
     }
 
@@ -41,7 +41,7 @@ const UpdateInterview = () => {
         let id = url[url.length - 1];
         setId(id);
         
-        axios.get(`http://localhost:8000/api/interview/${id}`)
+        axios.get(`https://horsefields.wl.r.appspot.com/api/interview/${id}`)
         .then((res) => {
             setInterviewData(res.data);
             setCounter(res.data.questionData.length);
